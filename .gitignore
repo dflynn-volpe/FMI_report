@@ -1,0 +1,6 @@
+*.RData
+*.xlsx
+*.csv
+FMI_Waze_Assessment_cache/*
+FMI_Waze_Assessment_files/*
+images/*

@@ -1,0 +1,252 @@
+---
+title: "FMI Waze Cross Project Assessment"
+author: "Dan Flynn"
+date: "4/14/2020"
+output:
+  html_document:
+    fig_caption: true
+    df_print: paged
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+---
+
+<!-- Add the following line manually to the rendered HTML document so that IE does not block the javascript elements: -->
+<!-- saved from url=(0014)about:internet --> 
+
+```{r setup1, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+library(plotly)
+```
+
+# Overview
+
+This document summarizes the work of the SDC Cross-project team. We have analyzed a selected set of the Freight Mobility Initiative (FMI) data from ATRI, as well as crowdsourced traffic incident reports from the Waze for Cities feed. For comparison purposes, an area of eastern Massachusetts was selected for September 2019. 
+
+All code is version-controlled in the `FMI_Waze` repository on GitLab within SDC.
+
+Main takeaways:
+
+- The data can be usefully integrated together.
+- The spatial and temporal patterns of the FMI and Waze data are distinct. 
+  + There are locations and times where there is high truck activity but low Waze activity, likely distribution centers and commerical shipping routes.
+  + The converse is true; Waze data volume is highest at commuting hours, in more densely populated areas.
+  + However, there is useful areas of overlap between these two data sets.
+
+```{r setup, cache = TRUE}
+
+
+d <- readr::read_csv('MA_subset_2019-09-01_2019-09-30_Joined.csv')
+
+d$date <- as.Date(d$day, format = '%Y-%j')
+
+d$datetime <- strptime(paste(d$day, d$hour), format = '%Y-%j %H', tz = 'US/Eastern')
+
+d$day_week <- lubridate::wday(d$datetime, label = TRUE, abbr = FALSE)
+d$weekend <- d$day_week == "Saturday" | d$day_week == "Sunday"
+d$daytime <- d$hour > '06' & d$hour < '20'
+
+
+# fix bad speed data
+# bad_speed = d[d$speed_mean > 90 & !is.na(d$speed_mean), c('speed_min', 'speed_median', 'speed_mean', 'speed_max')]
+
+d[d$speed_mean > 90 & !is.na(d$speed_mean), c('speed_min', 'speed_median', 'speed_mean', 'speed_max')] = NA
+
+```
+
+# Mapping 
+
+The following maps show aggregated counts of unique truck IDs per hour and counts of Waze events per hour. The spatial unit is 1-square mile hexagonal grid cells. An alternative approach to pursue in the future is to assign each event to a road segment.
+
+These maps further aggregate the count to daytime (7 am to 7pm, Eastern) and weekend/weekday time periods for ease of comparison.
+
+## Weekdays {.tabset .tabset-pills}
+
+### FMI Truck Counts
+
+```{r day_fmi}
+# 1 = weekday /nighttime
+# 2 = weekday / daytime
+# 3 = weekend / nightitme
+# 4 = weekend / daytime
+knitr::include_graphics('images/Truck_count_plots_Page_2.jpg')
+knitr::include_graphics('images/Truck_count_plots_Page_1.jpg')
+
+```
+
+### Waze Alert Counts
+
+```{r day_waze}
+knitr::include_graphics('images/Waze_count_plots_Page_2.jpg')
+knitr::include_graphics('images/Waze_count_plots_Page_1.jpg')
+
+```
+
+## Weekend {.tabset .tabset-pills}
+
+### FMI Truck Counts
+
+```{r day_fmi2}
+knitr::include_graphics('images/Truck_count_plots_Page_4.jpg')
+knitr::include_graphics('images/Truck_count_plots_Page_3.jpg')
+```
+
+### Waze Alert Counts
+
+```{r day_waze2}
+knitr::include_graphics('images/Waze_count_plots_Page_4.jpg')
+knitr::include_graphics('images/Waze_count_plots_Page_3.jpg')
+
+```
+
+
+## FMI Truck Speeds {.tabset .tabset-pills}
+
+Note these maps compare just weekday and weekend time periods for mean speeds of unique truck IDs within a grid cell. 
+The mean speed of a given truck ID was first calculated; these values are the means of those mean values by truck ID.
+
+### Weekday
+
+```{r day_truckspeed}
+knitr::include_graphics('images/Truck_speed_plots_Page_2.jpg')
+knitr::include_graphics('images/Truck_speed_plots_Page_1.jpg')
+```
+
+
+### Weekend
+
+```{r end_truckspeed}
+knitr::include_graphics('images/Truck_speed_plots_Page_4.jpg')
+knitr::include_graphics('images/Truck_speed_plots_Page_3.jpg')
+
+```
+
+
+# Plotting 
+
+```{r aggregate}
+d_a <- d %>%
+  group_by(GRID_ID, weekend, daytime) %>%
+  summarize(sum_count = sum(truck_n, na.rm = T),
+            sum_obs = sum(!is.na(truck_n)),
+            mean_count = sum_count / sum_obs,
+            mean_speed = mean(speed_mean, na.rm = T),
+            median_speed = median(speed_median, na.rm = T),
+            sum_crash = sum(crash_n, na.rm = T),
+            sum_weh = sum(weh_n, na.rm = T),
+            sum_jam = sum(jam_n, na.rm = T),
+            sum_roadclose = sum(roadclose_n, na.rm = T),
+            sum_waze_obs = sum(!is.na(crash_n)),
+            mean_crash = sum_crash / sum_waze_obs,
+            mean_jam = sum_jam / sum_waze_obs,
+            mean_weh = sum_weh / sum_waze_obs,
+            mean_roadclose = sum_roadclose / sum_waze_obs,
+            sum_all_waze = (sum_crash + sum_weh + sum_jam + sum_roadclose),
+            mean_all_waze =  sum_all_waze / sum_waze_obs
+  )
+            
+
+d_a$weekend <- factor(d_a$weekend, labels = c('Weekday', 'Weekend'))
+d_a$daytime <- factor(d_a$daytime, labels = c('Nighttime', 'Daytime'))
+
+
+```
+
+## Volume relationships
+
+Each point below represents one grid cell. Values are the sum of distinct truck IDs or unique Waze alerts for the specified time frame in that grid cell.
+
+
+```{r volume, fig.width = 8, fig.height= 10}
+gp <- ggplot(d_a, aes(x = round(sum_count, 1), y = round(sum_all_waze, 1))) +
+  geom_point(alpha = 0.1,
+             #, aes(size = sum_obs)
+             aes(text = paste('FMI count:', sum_count, '\nWaze count:', sum_all_waze,
+                              '\nGrid ID:', GRID_ID))) +
+  theme_bw() +
+  facet_wrap(~weekend+daytime) +
+  geom_smooth(method = 'lm') +
+  ylab('Sum hourly counts of Waze reports by grid cell') +
+  xlab('Sum hourly counts of FMI truck reports by grid cell') +
+  ggtitle('Relationship between FMI and Waze data volume by grid cell')
+
+ggplotly(gp, tooltip = 'text', width = 700, height = 600)
+
+```
+
+## Waze jams and truck speeds
+
+```{r aggregate_jam}
+d_j <- d %>%
+  mutate(high_jams = ifelse(jam_n > 2 & !is.na(jam_n), 'High Jams', 'Low Jams')) %>%
+  group_by(GRID_ID, weekend, hour, high_jams) %>%
+  summarize(sum_count = sum(truck_n, na.rm = T),
+            sum_obs = sum(!is.na(truck_n)),
+            mean_count = sum_count / sum_obs,
+            mean_speed = mean(speed_mean, na.rm = T),
+            median_speed = median(speed_median, na.rm = T),
+            sum_crash = sum(crash_n, na.rm = T),
+            sum_weh = sum(weh_n, na.rm = T),
+            sum_jam = sum(jam_n, na.rm = T),
+            sum_roadclose = sum(roadclose_n, na.rm = T),
+            sum_waze_obs = sum(!is.na(crash_n)),
+            mean_crash = sum_crash / sum_waze_obs,
+            mean_jam = sum_jam / sum_waze_obs,
+            mean_weh = sum_weh / sum_waze_obs,
+            mean_roadclose = sum_roadclose / sum_waze_obs,
+            sum_all_waze = (sum_crash + sum_weh + sum_jam + sum_roadclose),
+            mean_all_waze =  sum_all_waze / sum_waze_obs
+  )
+            
+
+d_j$weekend <- factor(d_j$weekend, labels = c('Weekday', 'Weekend'))
+
+# test: d_j %>% ungroup() %>% group_by(high_jams) %>% summarize(median(sum_jam))
+# table(d_j$high_jams)
+```
+
+The following plot and table demonstrate that the two data sets can be combined in useful ways. When at least 3 jam reports are present in the Waze data, there is a dramatic drop in the speeds of trucks in the FMI data. The boxplots below group truck speeds into five categories, and the y-axis represents the mean count of distinct truck IDs per grid cell for that time period and number of jams. Note that 'low jams' represents most of the data, `r format(table(d_j$high_jams)[2], big.mark = ',')` grid cells x weekend/weekday time period, while 'high jams' is a less common condition, only `r format(table(d_j$high_jams)[1], big.mark = ',')` grid cells x weekend/weekday time period.
+
+
+
+```{r plot_jams}
+gj <- ggplot(d_j %>% filter(!is.na(median_speed)), aes(x = cut(na.omit(median_speed), 5), y = sum_count)) + 
+  geom_boxplot() +
+  scale_y_log10() +
+  xlab('Median speed grouping') +
+  ylab('Log(N) of distinct truck IDs') +
+  facet_wrap(~weekend + high_jams) +
+  ggtitle('Truck speeds and counts by Waze jam reports')
+
+gj  
+
+```
+
+
+
+```{r table_jams}
+sum_tab = d_j %>%
+  ungroup() %>%
+  group_by(weekend, high_jams) %>%
+  summarize(`Number of grid cell x time combinations` = n(),
+            `Median FMI truck speeds` = median(median_speed, na.rm=T),
+            `Sum FMI truck counts` = sum(sum_count, na.rm=T),
+            `Median Waze jam reports` = median(sum_jam, na.rm=T),
+            `Sum all Waze reports` = sum(sum_all_waze, na.rm=T),
+            )
+
+
+kable(sum_tab,
+      format.args = list(big.mark = ','),
+      caption = "Summary of FMI and Waze data by weekend/weekday and high Waze jam counts" ) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  row_spec(nrow(sum_tab), bold = F, hline_after = T)
+
+
+```
