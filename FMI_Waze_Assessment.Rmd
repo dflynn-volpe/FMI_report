@@ -1,7 +1,7 @@
 ---
-title: "FMI Waze Cross Project Assessment"
-author: "Dan Flynn"
-date: "4/14/2020"
+title: "FMI Waze Cross-Project Assessment"
+author: "Dan Flynn, Billy Chupp, Alexis Zubrow"
+date: "`r Sys.Date()`"
 output:
   html_document:
     fig_caption: true
@@ -11,6 +11,8 @@ output:
     toc_float:
       collapsed: yes
       smooth_scroll: yes
+fig_width: 4 
+fig_height: 4
 ---
 
 <!-- Add the following line manually to the rendered HTML document so that IE does not block the javascript elements: -->
@@ -25,24 +27,9 @@ library(ggplot2)
 library(plotly)
 ```
 
-# Overview
-
-This document summarizes the work of the SDC Cross-project team. We have analyzed a selected set of the Freight Mobility Initiative (FMI) data from ATRI, as well as crowdsourced traffic incident reports from the Waze for Cities feed. For comparison purposes, an area of eastern Massachusetts was selected for September 2019. 
-
-All code is version-controlled in the `FMI_Waze` repository on GitLab within SDC.
-
-Main takeaways:
-
-- The data can be usefully integrated together.
-- The spatial and temporal patterns of the FMI and Waze data are distinct. 
-  + There are locations and times where there is high truck activity but low Waze activity, likely distribution centers and commerical shipping routes.
-  + The converse is true; Waze data volume is highest at commuting hours, in more densely populated areas.
-  + However, there is useful areas of overlap between these two data sets.
 
 ```{r setup, cache = TRUE}
-
-
-d <- readr::read_csv('MA_subset_2019-09-01_2019-09-30_Joined.csv')
+d <- readr::read_csv('Data/MA_subset_2019-09-01_2019-09-30_Joined.csv')
 
 d$date <- as.Date(d$day, format = '%Y-%j')
 
@@ -60,15 +47,102 @@ d[d$speed_mean > 90 & !is.na(d$speed_mean), c('speed_min', 'speed_median', 'spee
 
 ```
 
-# Mapping 
+# Overview
 
-The following maps show aggregated counts of unique truck IDs per hour and counts of Waze events per hour. The spatial unit is 1-square mile hexagonal grid cells. An alternative approach to pursue in the future is to assign each event to a road segment.
+The Secure Data Commons ([SDC](https://its.dot.gov/data/secure/)) provides access to novel data sets within the Department of Transportation for researchers and partner agencies. Two data sets are used in this work: 
 
-These maps further aggregate the count to daytime (7 am to 7pm, Eastern) and weekend/weekday time periods for ease of comparison.
+- **FMI Data**: The Freight Mobility Initiative (FMI) data is provided via an agreement between the American Transportation Research Institute (ATRI) and the Bureau of Transportation Statistics (BTS) of the USDOT. This data set includes GPS locations, speed, and direction of travel for anonymized trucks.
 
-## Weekdays {.tabset .tabset-pills}
+- **Waze Data**: The mobile phone navigation app company Waze has been providing data on crowdsourced traffic incident reports and additional system-generated data via an agreement with the DOT. These data include location and time of incidents, along with a number of characteristics of incidents, as well as location, extent, and speed of jams. 
 
-### FMI Truck Counts
+This document summarizes the work of the SDC Cross-project team in assessing how these two data sets can be usefully analyzed together. 
+
+Data set characteristics:
+
+| Characteristic                  |    FMI        |   Waze               | Notes                            |
+|---------------------------------|---------------|----------------------|---------------------------------|
+| Spatial Range                   |  National     | National             | Waze data organized with state partitions |
+| Available Time Range            |  Since October 2018 | Since March 2017 |  Gaps exist for some time periods |
+| Volume of data  |  106 B GPS records |   1.6 B alert records </br> 3.4 B jam records </br> 11 B jam point sequence records | As off late April 2020   |
+| Update frequency               |  Bi-weekly    | API request every 2 minute  | Both have pipeline processing times, so not available to analysts immediately  |
+
+<!-- 
+From Hive: describe extended {table}
+From Redshift: select count(*) from {table}
+-->
+
+
+### Main takeaways
+
+- The data can be usefully integrated together. The two data sets provide complementary information on volume and characteristics of crowdsourced traffic incidents, and volume and characteristics of commercial trucking activity. Together, these data could be applied to a number of use cases in roadway safety, roadway system performance, and travel monitoring.
+
+- Through this effort, we developed general-purpose query and data processing scripts in GitLab which can be used by other teams. The code collaboration tools in the SDC provide a means for future analysts to replicate and build on the analysis presented here.
+
+- Successfully integrating these two high-volume, high-velocity data sets requires a familiarity with the characteristics of the data, the data warehousing system, and best practices for geo-spatial analysis. Documentation exists in the SDC to provide much of this necessary information, but future users of these data would benefit from documentation which goes into more detail
+
+- The spatial and temporal patterns of the FMI and Waze data are distinct. 
+  + There are locations and times where there is high truck activity but low Waze activity, likely distribution centers and commercial shipping routes.
+  + The converse is true; Waze data volume is highest at commuting hours, in more densely populated areas.
+  + However, there is useful areas of overlap between these two data sets.
+
+# Methods
+
+Given the vast scale of these data sets, this assessment selected one region of the country, for one month, namely eastern Massachusetts for September 2019. This allows a proof-of-concept assessment of how these data can be joined and analyzed in concert. The process involved the following steps:
+
+## Querying the data warehouse
+
+Both the Waze and FMI data can be queried using standard SQL syntax. The Waze data are warehoused in an Amazon Redshift cluster, while the FMI data are warehoused in a Hive/Hadoop cluster. In practice, the query syntax is similar for both: query the database for a date range and general spatial area, then perform more detailed spatial analysis on the results from the query. In the course of developing the code for this project, we encountered performance issues with the Hive/Hadoop cluster. We worked with the SDC developer team to test improvements to the database structure, which the SDC team has implemented.
+
+The 'two-step' query process (first query a general area in SQL, then perform more detailed spatial data processing on the results) could in theory be simplified to one step. However, this would involve putting much more computational load on the data warehouse infrastructure, as opposed to on a data analyst's own EC2 compute instance in the two-step process. The first spatial step is similar for both: querying for a date range (2019-09-01 to 2019-09-30) and a latitude and longitude range that encompasses eastern Massachusetts (or any region of interest). The second step is also the same: convert to spatial data frames, apply the same geographic projection on the latitude and longitudes, and clip to a shapefile for the state of Massachusetts using standard, open-source geospatial analysis libraries.
+
+## Spatial joining
+
+Joining two spatial datasets involves decisions on the part of the analysis team; the methods depend on the needs of the analysis. The two most meaningful options for this project were to join to road segments, or to join to a common grid structure. These two approaches are summarized below:
+
+- **Road segment**
+  + Joining points to road segments result in one row per road segment, with attributes for number and characteristics of commercial motor vehicles, and number and characteristics of traffic alerts. Each time step would add one additional row for each road segment.
+  + The Highway Performance Monitoring System ([HPMS](https://www.fhwa.dot.gov/policyinformation/hpms.cfm)) provides an road network for the National Highway System roads. While convenient to use for spatial analyses, it is limited by not including most lower functional class roads.
+  + Each state maintains their own detailed road network. It would be possible to access a road network for this study area (Massachusetts), but the methods of spatial joining would need to be adapted to apply to other states.
+  + Any analyses need to take into account the different lengths and characteristics of the road segments; correctly joining points to road segments requires careful work to assign points correctly to the right lanes and directions (applicable to higher functional class roads).
+
+- **Grid or Polygon**
+  + Joining points to road segments result in one row per grid cell or polygon, with attributes for number and characteristics of commercial motor vehicles, and number and characteristics of traffic alerts. Each time step would add an additional row for each grid cell or polygon.
+  + Joining to a county, census block, or other political boundary is straightforward and would facilitate use of other characteristics of that political unit, including population or socio-economic data like the Longitudinal Employer-Household Dynamics ([LEHD](https://lehd.ces.census.gov/LEHD_data_research.html)) data from the Census Bureau.
+  + Joining to a grid cell is likewise straightforward. By providing an equal-area grid cell to join to, spatial analysis is greatly facilitated (as area does not need to be used as a co-variate). 
+
+```{r summarytables, eval=TRUE, include=FALSE}
+# Values for intro text
+
+waze_sum1 <- d %>% 
+  summarize(crashes = sum(crash_n, na.rm = T),
+            wehs = sum(weh_n, na.rm = T),
+            jams = sum(jam_n, na.rm = T),
+            total_waze = crashes + wehs + jams
+            )
+
+
+
+
+```
+
+ 
+For most safety applications, it is ideal to work at the road segment level, since that is where safety interventions can be applied. For our initial work, we elected to use a grid to facilitate rapid analysis for the purpose of comparing the two data sets in conjunction with each other. We joined all point data (FMI and Waze) to grid layer of 1 square-mile hexagons. Hexagonal tessellations are appropriate because they better represent underlying linear features like roads, while minimizing the data artifacts associated with edge areas ([ESRI reference](https://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/h-whyhexagons.htm)). The area of eastern Massachusetts selected here encompasses `r format(length(unique(d$GRID_ID)), big.mark = ',')` square miles. For the month of September 2019, data on `r format(sum(d$truck_n, na.rm = T), big.mark = ',', scientific = F)` unique trucks by hour were included from the FMI data, as well `r format(waze_sum1$total_waze, big.mark = ',', scientific = F)` unique Waze events by hour.
+
+Code for this project was written in SQL, Python, and R, and is version-controlled in the `FMI_Waze` repository on the GitLab service within SDC.
+
+# Results
+
+## Mapping
+
+The following maps show aggregated counts of unique truck IDs per hour and counts of Waze events per hour. The spatial unit is 1-square mile hexagonal grid cells. A road segment approach using the HPMS network or a more detailed state-provided network is possible in the future.
+
+These maps further aggregate the count of each  to daytime (7 am to 7pm, Eastern) and weekend/weekday time periods for ease of comparison.
+
+### Weekdays {.tabset .tabset-pills}
+
+
+
+#### FMI Truck Counts
 
 ```{r day_fmi}
 # 1 = weekday /nighttime
@@ -80,7 +154,7 @@ knitr::include_graphics('images/Truck_count_plots_Page_1.jpg')
 
 ```
 
-### Waze Alert Counts
+#### Waze Alert Counts
 
 ```{r day_waze}
 knitr::include_graphics('images/Waze_count_plots_Page_2.jpg')
@@ -88,16 +162,16 @@ knitr::include_graphics('images/Waze_count_plots_Page_1.jpg')
 
 ```
 
-## Weekend {.tabset .tabset-pills}
+### Weekend {.tabset .tabset-pills}
 
-### FMI Truck Counts
+#### FMI Truck Counts
 
 ```{r day_fmi2}
 knitr::include_graphics('images/Truck_count_plots_Page_4.jpg')
 knitr::include_graphics('images/Truck_count_plots_Page_3.jpg')
 ```
 
-### Waze Alert Counts
+#### Waze Alert Counts
 
 ```{r day_waze2}
 knitr::include_graphics('images/Waze_count_plots_Page_4.jpg')
@@ -106,12 +180,12 @@ knitr::include_graphics('images/Waze_count_plots_Page_3.jpg')
 ```
 
 
-## FMI Truck Speeds {.tabset .tabset-pills}
+### FMI Truck Speeds {.tabset .tabset-pills}
 
 Note these maps compare just weekday and weekend time periods for mean speeds of unique truck IDs within a grid cell. 
 The mean speed of a given truck ID was first calculated; these values are the means of those mean values by truck ID.
 
-### Weekday
+#### Weekday
 
 ```{r day_truckspeed}
 knitr::include_graphics('images/Truck_speed_plots_Page_2.jpg')
@@ -119,7 +193,7 @@ knitr::include_graphics('images/Truck_speed_plots_Page_1.jpg')
 ```
 
 
-### Weekend
+#### Weekend
 
 ```{r end_truckspeed}
 knitr::include_graphics('images/Truck_speed_plots_Page_4.jpg')
@@ -127,8 +201,6 @@ knitr::include_graphics('images/Truck_speed_plots_Page_3.jpg')
 
 ```
 
-
-# Plotting 
 
 ```{r aggregate}
 d_a <- d %>%
@@ -235,10 +307,10 @@ sum_tab = d_j %>%
   ungroup() %>%
   group_by(weekend, high_jams) %>%
   summarize(`Number of grid cell x time combinations` = n(),
-            `Median FMI truck speeds` = median(median_speed, na.rm=T),
-            `Sum FMI truck counts` = sum(sum_count, na.rm=T),
-            `Median Waze jam reports` = median(sum_jam, na.rm=T),
-            `Sum all Waze reports` = sum(sum_all_waze, na.rm=T),
+            `Median FMI truck speeds` = median(median_speed, na.rm = T),
+            `Sum FMI truck counts` = sum(sum_count, na.rm = T),
+            `Median Waze jam reports` = median(sum_jam, na.rm = T),
+            `Sum all Waze reports` = sum(sum_all_waze, na.rm = T),
             )
 
 
@@ -250,3 +322,35 @@ kable(sum_tab,
 
 
 ```
+
+# Summary
+
+- Collaboration across SDC teams
+  + Use of GitLab 
+  + Shared code within and across teams
+  + Collaboration 
+
+## Next Steps 
+
+Next steps will be considered in consultation with the project manager and stakeholders.
+
+Themes
+
+- Pandemic response 
+  + COVID Data Coordination group
+
+- Travel time / Mobility / Energy  
+  + System-generated jam files from Waze include the spatial extent as well as severity of the jam. Looking at the influence of jams on freight travel from FMI could be fruitful.
+  + Fuel efficiency / truck platooning 
+
+- Safety
+  + Crash predictability (with EDT)
+
+
+- Assessment of data and validation
+  + TMAS to FMI
+  + WYDOT Speed data to NPM-RDS
+  + TMAS to Waze (under SDI)
+
+
+
