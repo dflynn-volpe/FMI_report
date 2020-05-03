@@ -186,6 +186,7 @@ knitr::include_graphics('images/Waze_count_plots_Page_3.jpg')
 
 Note these maps compare just weekday and weekend time periods for mean speeds of unique truck IDs within a grid cell. 
 The mean speed of a given truck ID was first calculated; these values are the means of those mean values by truck ID.
+Truck speeds are generally lower in the Boston metro area, with the interstate areas contributing some of the highest speed. Speeds generally retain the same characteristics on weekdays and weekends.
 
 #### Weekday
 
@@ -234,7 +235,7 @@ d_a$daytime <- factor(d_a$daytime, labels = c('Nighttime', 'Daytime'))
 
 ## Volume relationships
 
-We additionally assessed the relationship between the two data sets in terms of the volume of data. A high correspodance in data volume indicates that when analyzed by equal-area grid cell and hour, generally high activity in one stream of data is matched by hihg activity in the other. Each point in the figures below represents one grid cell. Values are the sum of distinct truck IDs or unique Waze alerts for the specified time frame (weekend or weekday, daytime or nighttime) in that grid cell.
+We additionally assessed the relationship between the two data sets in terms of the volume of data. A high correspondence in data volume indicates that when analyzed by equal-area grid cell and hour, generally high activity in one stream of data is matched by high activity in the other. Each point in the figures below represents one grid cell. Values are the sum of distinct truck IDs or unique Waze alerts for the specified time frame (weekend or weekday, daytime or nighttime) in that grid cell.
 
 ```{r volume, fig.width = 8, fig.height= 10}
 gp <- ggplot(d_a, aes(x = round(sum_count, 1), y = round(sum_all_waze, 1))) +
@@ -253,7 +254,7 @@ ggplotly(gp, tooltip = 'text', width = 700, height = 600)
 
 ```
 
-Since both axes represent highly skewed data (few, very large values), it is also useful to view these relationships on a logrithmic scale. This demonstrates close correspondence between the volume of FMI and volume of Waze alert data when accounting for the distribution of the values.
+Since both axes represent highly skewed data (few, very large values), it is also useful to view these relationships on a logarithmic scale. This demonstrates close correspondence between the volume of FMI and volume of Waze alert data when accounting for the distribution of the values.
 
 ```{r volume_log, fig.width = 8, fig.height= 10}
 gpl <- gp + scale_y_log10() + scale_x_log10()
@@ -340,24 +341,27 @@ kable(sum_tab,
 
 # Next Steps 
 
-Next steps will be considered in consultation with the project manager and stakeholders.
+Next steps will be considered in consultation with the project manager and stakeholders. We consider the following to represent potentially fruitful next steps:
 
-Themes
-
-- Pandemic response 
-  + COVID Data Coordination group
-
-- Travel time / Mobility / Energy  
+- **Pandemic response**
+  + The FMI data represents an unprecedented opportunity for USDOT to monitor and understand commercial motor vehicle activity. The COVID-19 pandemic is a natural experiment on all aspects of society, but in particular is affecting the trucking industry in distinct ways, with some states seeing spikes at the outset of the pandemic, followed by dips in trucking activity of different depths ([ATRI analysis](https://www.ttnews.com/articles/atri-coronavirus-study-shows-truck-activity-spike-dip-six-states)). 
+  
+  + Combining the Waze and FMI data would provide a way for the department to understand and monitor the distinctive behaviors of commuters versus commercial motor vehicles as our country recovers from the pandemic.
+  
+- **Travel time / Mobility / Energy **
   + System-generated jam files from Waze include the spatial extent as well as severity of the jam. Looking at the influence of jams on freight travel from FMI could be fruitful.
-  + Fuel efficiency / truck platooning 
+  
+  + Fuel efficiency and truck platooning are possible to investigate using the FMI data, since unique truck IDs are available with GPS pings at high frequency.
 
-- Safety
-  + Crash predictability (with EDT)
+- **Safety**
+  + Crash predictability (with police crash report data). The Waze data has been successfully used to understand and predict crash frequency at broad spatial scales. Combining both Waze and FMI could support a crash prediction tool for commercial motor vehicles better than using either one of the data sets alone.
 
-- Assessment of data and validation
-  + TMAS to FMI
-  + WYDOT Speed data to NPM-RDS
-  + TMAS to Waze (under SDI)
+- (*Assessment of data and validation**
+  + WYDOT Speed data to NPM-RDS. The Connected Vehicle Pilot in SDC has detailed vehicle speed data from Wyoming Department of Transportation. These data could be usefully validated against speed profile data for NHS road segments in the National Performance Management Research Data Set ([NPM-RDS](https://ops.fhwa.dot.gov/perf_measurement/)) from FHWA.
+
+  + TMAS to FMI. The Traffic Monitoring Analysis System ([TMAS](https://www.fhwa.dot.gov/policyinformation/tables/tmasdata/)) from FHWA provides ground-truthed traffic count and vehicle classification data at over 8,000 locations nationwide. Joining TMAS and FMI data would allow an understanding of the percent of all trucks which are represented in the FMI data by space and time.
+
+  + TMAS to Waze (under SDI). The Safety Data Initiative is now undertaking an analysis of the Waze data in the context of the TMAS data as noted above for FMI. This will provide confidence intervals for how much of the traveling public is represented in the Waze data.
 
 
 
