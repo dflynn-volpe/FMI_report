@@ -11,8 +11,6 @@ output:
     toc_float:
       collapsed: yes
       smooth_scroll: yes
-fig_width: 4 
-fig_height: 4
 ---
 
 <!-- Add the following line manually to the rendered HTML document so that IE does not block the javascript elements: -->
@@ -76,7 +74,7 @@ From Redshift: select count(*) from {table}
 
 - The data can be usefully integrated together. The two data sets provide complementary information on volume and characteristics of crowdsourced traffic incidents, and volume and characteristics of commercial trucking activity. Together, these data could be applied to a number of use cases in roadway safety, roadway system performance, and travel monitoring.
 
-- Through this effort, we developed general-purpose query and data processing scripts in GitLab which can be used by other teams. The code collaboration tools in the SDC provide a means for future analysts to replicate and build on the analysis presented here.
+- Through this effort, we developed general-purpose query and data processing scripts in GitLab which can be used by other teams. The code collaboration tools in the SDC provide a means for future analysts to replicate and build on the analysis presented here. This effort leveraged some existing work by other teams (BTS) who had started exploring the FMI data, as well as code from the [Safety Data Initiative Waze pilot project](https://www.transportation.gov/SafetyDataInitiative/Pilots#waze). 
 
 - Successfully integrating these two high-volume, high-velocity data sets requires a familiarity with the characteristics of the data, the data warehousing system, and best practices for geo-spatial analysis. Documentation exists in the SDC to provide much of this necessary information, but future users of these data would benefit from documentation which goes into more detail
 
@@ -140,11 +138,13 @@ These maps further aggregate the count of each  to daytime (7 am to 7pm, Eastern
 
 ### Weekdays {.tabset .tabset-pills}
 
+Comparing daytime to nighttime, the FMI data show consistent patterns but less total volume in the evening. The mean count of unique truck IDs per hour ranges as high as 106, and high values are consistently observed along the interstate 495 and interstate 90 routes ([Google Map of the area](https://www.google.com/maps/place/Massachusetts/@42.1578263,-71.5714201,9z/data=!4m5!3m4!1s0x89e3656de973bffd:0x45c6d03655830d1c!8m2!3d42.4072107!4d-71.3824374)). While interstates appear prominently in the FMI data, there is even coverage across the entire study area for presence of trucking activity.
 
+When clicking the `Waze Alert Counts` tab, a strikingly different pattern emerges. Note the scale differs between the FMI and Waze tabs. The dense cluster of Waze alert activity in the metro Boston area is maintained in both daytime and nighttime, but much less activity is observed in the nighttime. 
 
 #### FMI Truck Counts
 
-```{r day_fmi}
+```{r day_fmi, out.height = "400px"}
 # 1 = weekday /nighttime
 # 2 = weekday / daytime
 # 3 = weekend / nightitme
@@ -156,7 +156,7 @@ knitr::include_graphics('images/Truck_count_plots_Page_1.jpg')
 
 #### Waze Alert Counts
 
-```{r day_waze}
+```{r day_waze, out.height = "400px"}
 knitr::include_graphics('images/Waze_count_plots_Page_2.jpg')
 knitr::include_graphics('images/Waze_count_plots_Page_1.jpg')
 
@@ -164,16 +164,18 @@ knitr::include_graphics('images/Waze_count_plots_Page_1.jpg')
 
 ### Weekend {.tabset .tabset-pills}
 
+The patterns on the weekends are similar for both FMI and Waze. Note that the scale is the same for the weekday plots within each data set (FMI and Waze), but remains different across data sets. The FMI data show distinct patches of high activity on weekends, which may represent distribution centers or other warehouses. Waze activity is reduced on weekends, and distinct patches of high activity likewise emerge.
+
 #### FMI Truck Counts
 
-```{r day_fmi2}
+```{r day_fmi2, out.height = "400px"}
 knitr::include_graphics('images/Truck_count_plots_Page_4.jpg')
 knitr::include_graphics('images/Truck_count_plots_Page_3.jpg')
 ```
 
 #### Waze Alert Counts
 
-```{r day_waze2}
+```{r day_waze2, out.height = "400px"}
 knitr::include_graphics('images/Waze_count_plots_Page_4.jpg')
 knitr::include_graphics('images/Waze_count_plots_Page_3.jpg')
 
@@ -187,7 +189,7 @@ The mean speed of a given truck ID was first calculated; these values are the me
 
 #### Weekday
 
-```{r day_truckspeed}
+```{r day_truckspeed, out.height = "400px"}
 knitr::include_graphics('images/Truck_speed_plots_Page_2.jpg')
 knitr::include_graphics('images/Truck_speed_plots_Page_1.jpg')
 ```
@@ -195,7 +197,7 @@ knitr::include_graphics('images/Truck_speed_plots_Page_1.jpg')
 
 #### Weekend
 
-```{r end_truckspeed}
+```{r end_truckspeed, out.height = "400px"}
 knitr::include_graphics('images/Truck_speed_plots_Page_4.jpg')
 knitr::include_graphics('images/Truck_speed_plots_Page_3.jpg')
 
@@ -232,8 +234,7 @@ d_a$daytime <- factor(d_a$daytime, labels = c('Nighttime', 'Daytime'))
 
 ## Volume relationships
 
-Each point below represents one grid cell. Values are the sum of distinct truck IDs or unique Waze alerts for the specified time frame in that grid cell.
-
+We additionally assessed the relationship between the two data sets in terms of the volume of data. A high correspodance in data volume indicates that when analyzed by equal-area grid cell and hour, generally high activity in one stream of data is matched by hihg activity in the other. Each point in the figures below represents one grid cell. Values are the sum of distinct truck IDs or unique Waze alerts for the specified time frame (weekend or weekday, daytime or nighttime) in that grid cell.
 
 ```{r volume, fig.width = 8, fig.height= 10}
 gp <- ggplot(d_a, aes(x = round(sum_count, 1), y = round(sum_all_waze, 1))) +
@@ -252,7 +253,20 @@ ggplotly(gp, tooltip = 'text', width = 700, height = 600)
 
 ```
 
+Since both axes represent highly skewed data (few, very large values), it is also useful to view these relationships on a logrithmic scale. This demonstrates close correspondence between the volume of FMI and volume of Waze alert data when accounting for the distribution of the values.
+
+```{r volume_log, fig.width = 8, fig.height= 10}
+gpl <- gp + scale_y_log10() + scale_x_log10()
+
+ggplotly(gpl, tooltip = 'text', width = 700, height = 600)
+
+```
+
+
+
 ## Waze jams and truck speeds
+
+
 
 ```{r aggregate_jam}
 d_j <- d %>%
@@ -300,7 +314,7 @@ gj
 
 ```
 
-
+The same data are summarized below in tabular form for quick reference.
 
 ```{r table_jams}
 sum_tab = d_j %>%
@@ -323,14 +337,8 @@ kable(sum_tab,
 
 ```
 
-# Summary
 
-- Collaboration across SDC teams
-  + Use of GitLab 
-  + Shared code within and across teams
-  + Collaboration 
-
-## Next Steps 
+# Next Steps 
 
 Next steps will be considered in consultation with the project manager and stakeholders.
 
@@ -345,7 +353,6 @@ Themes
 
 - Safety
   + Crash predictability (with EDT)
-
 
 - Assessment of data and validation
   + TMAS to FMI
