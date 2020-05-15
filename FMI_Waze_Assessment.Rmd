@@ -47,13 +47,15 @@ d[d$speed_mean > 90 & !is.na(d$speed_mean), c('speed_min', 'speed_median', 'spee
 
 # Overview
 
-The Secure Data Commons ([SDC](https://its.dot.gov/data/secure/)) provides access to novel data sets within the Department of Transportation for researchers and partner agencies. Two data sets are used in this work: 
+The Secure Data Commons ([SDC](https://its.dot.gov/data/secure/)) provides access to novel data sets within the Department of Transportation for researchers and partner agencies. The SDC provides a platform for analysis efforts which integrate these novel data sets. To date, this 'Commons' aspect of the Secure Data Commons has not been fully utilized; this research project demonstrates an approach to integrating multiple data sets in the SDC. This document summarizes the work of the SDC Cross-project team in assessing how two of the SDC data sets can be usefully analyzed together. 
+
+
+Two data sets are used in this work: 
 
 - **FMI Data**: The Freight Mobility Initiative (FMI) data is provided via an agreement between the American Transportation Research Institute (ATRI) and the Bureau of Transportation Statistics (BTS) of the USDOT. This data set includes GPS locations, speed, and direction of travel for anonymized trucks.
 
 - **Waze Data**: The mobile phone navigation app company Waze has been providing data on crowdsourced traffic incident reports and additional system-generated data via an agreement with the DOT. These data include location and time of incidents, along with a number of characteristics of incidents, as well as location, extent, and speed of jams. 
 
-This document summarizes the work of the SDC Cross-project team in assessing how these two data sets can be usefully analyzed together. 
 
 Data set characteristics:
 
@@ -86,6 +88,16 @@ From Redshift: select count(*) from {table}
 # Methods
 
 Given the vast scale of these data sets, this assessment selected one region of the country, for one month, namely eastern Massachusetts for September 2019. This allows a proof-of-concept assessment of how these data can be joined and analyzed in concert. The process involved the following steps:
+
+## Accessing the data and requisite skills
+
+The SDC support team provides a detailed user guide (available publicly (here)[https://its.dot.gov/data/secure/files/Secure_Data_Commons_Data_Analyst_User_Guide.pdf]) for data analysts. This guide, along with instructions provided by the SDC support team, is sufficient for users to understand how to log on and access these data sets. Additional requisite skills include the following:
+
+- Working with data in the SDC requires at a minimum some familiarity with SQL (structured query language). SQL is a general-purpose query language familiar to users of any relational database.   
+- Efficient use of the data is greatly facilitated by familiarity with a modern data science scripting language such as R or Python. These open-source languages have a wide variety of sophisticated data science tools, including machine learning, geospatial analysis, time-series modeling, data integration, and data visualization. The SDC provides support for both R and Python, on the default Windows machines as well as on optional Linux machines.
+- Code collaboration and version control is supported in SDC with a GitLab server. This allows analysts to follow modern data science best practices by developing code in collaboration with teammates, keeping working versions of code available while developing new features.The data analyst user guide provides instructions on how to enable GitLab code repositories, but analysts need to bring their own knowledge of how to effectively set up and manage the repositories for their needs.
+
+Accessing the data 
 
 ## Querying the data warehouse
 
@@ -356,7 +368,7 @@ Next steps will be considered in consultation with the project manager and stake
 - **Safety**
   + Crash predictability (with police crash report data). The Waze data has been successfully used to understand and predict crash frequency at broad spatial scales. Combining both Waze and FMI could support a crash prediction tool for commercial motor vehicles better than using either one of the data sets alone.
 
-- (*Assessment of data and validation**
+- **Assessment of data and validation**
   + WYDOT Speed data to NPM-RDS. The Connected Vehicle Pilot in SDC has detailed vehicle speed data from Wyoming Department of Transportation. These data could be usefully validated against speed profile data for NHS road segments in the National Performance Management Research Data Set ([NPM-RDS](https://ops.fhwa.dot.gov/perf_measurement/)) from FHWA.
 
   + TMAS to FMI. The Traffic Monitoring Analysis System ([TMAS](https://www.fhwa.dot.gov/policyinformation/tables/tmasdata/)) from FHWA provides ground-truthed traffic count and vehicle classification data at over 8,000 locations nationwide. Joining TMAS and FMI data would allow an understanding of the percent of all trucks which are represented in the FMI data by space and time.
