@@ -89,15 +89,46 @@ From Redshift: select count(*) from {table}
 
 Given the vast scale of these data sets, this assessment selected one region of the country, for one month, namely eastern Massachusetts for September 2019. This allows a proof-of-concept assessment of how these data can be joined and analyzed in concert. The process involved the following steps:
 
-## Accessing the data and requisite skills
+## SDC Requisite Skills
 
-The SDC support team provides a detailed user guide (available publicly (here)[https://its.dot.gov/data/secure/files/Secure_Data_Commons_Data_Analyst_User_Guide.pdf]) for data analysts. This guide, along with instructions provided by the SDC support team, is sufficient for users to understand how to log on and access these data sets. Additional requisite skills include the following:
+The SDC support team provides a detailed user guide (available publicly [here](https://its.dot.gov/data/secure/files/Secure_Data_Commons_Data_Analyst_User_Guide.pdf)) for data analysts. This guide, along with instructions provided by the SDC support team, is sufficient for users to understand how to log on and access these data sets. 
 
-- Working with data in the SDC requires at a minimum some familiarity with SQL (structured query language). SQL is a general-purpose query language familiar to users of any relational database.   
-- Efficient use of the data is greatly facilitated by familiarity with a modern data science scripting language such as R or Python. These open-source languages have a wide variety of sophisticated data science tools, including machine learning, geospatial analysis, time-series modeling, data integration, and data visualization. The SDC provides support for both R and Python, on the default Windows machines as well as on optional Linux machines.
-- Code collaboration and version control is supported in SDC with a GitLab server. This allows analysts to follow modern data science best practices by developing code in collaboration with teammates, keeping working versions of code available while developing new features.The data analyst user guide provides instructions on how to enable GitLab code repositories, but analysts need to bring their own knowledge of how to effectively set up and manage the repositories for their needs.
+Competency in modern data science skills are required to be an effective user of the SDC. There are general data analysis skills which users should  
 
-Accessing the data 
+**General Data Analysis Skills Needed**:
+
+- Working with data in the SDC requires at a minimum some familiarity with **SQL** (structured query language). SQL is a general-purpose query language familiar to users of any relational database.   
+
+- Efficient use of the data is greatly facilitated by familiarity with a modern **data science scripting language** such as R or Python. These open-source languages have a wide variety of sophisticated data science tools, including machine learning, geospatial analysis, time-series modeling, data integration, and data visualization. The SDC provides support for both R and Python, on the default Windows machines as well as on optional Linux machines.
+
+- Code collaboration and version control is supported in SDC with a GitLab server. 
+  + This allows analysts to follow modern data science best practices by developing code in collaboration with teammates, keeping working versions of code available while developing new features. Familiarity with the `git` workflow, including the use of the GitHub platform, will facilitate 
+  + The data analyst user guide provides instructions on how to enable GitLab code repositories, but analysts need to bring their own knowledge of how to effectively set up and manage the repositories for their needs. 
+
+In addition, beyond these data science skills effecitve use of the SDC is facilitated by the following skills:
+
+- Understanding the where data exist and how to share files.
+  + Data Warehouse
+  + Team S3 buckets - Data and file sharing with a team is acheived with team S3 buckets.
+  + Local instance
+
+- Planning a project in a secure computing platform: 
+  + Adding new tools: 
+  + Accessing existing code
+  + Accessing additional data
+  + Uploading user-supplied data
+  + Export request process
+
+- Ways to make your workflow better: Optimize code, optimize instance, or optimize data warehouse configuration. 
+  + Optimize code
+  + Cloud instance management. Understanding parallelization, optimizing instance configuration. 
+  + Working with SDC team to make changes to data warehouse.
+  
+
+
+## Accessing the data 
+
+
 
 ## Querying the data warehouse
 
@@ -375,5 +406,16 @@ Next steps will be considered in consultation with the project manager and stake
 
   + TMAS to Waze (under SDI). The Safety Data Initiative is now undertaking an analysis of the Waze data in the context of the TMAS data as noted above for FMI. This will provide confidence intervals for how much of the traveling public is represented in the Waze data.
 
+
+## Areas for Improvement for SDC
+
+- Documentation of where data exist at different points in the pipeline is not obvious (or does not exist). Meaning: ingestion, curation, persistence, derived data.
+  + QA/QC documented on the data sets. 
+  + Dashboard of data quality over time for each data set. 
+  + Record of updates to data sets (e.g. historical Waze data for April - December 2019 had gaps before 2020-05-15, but was fixed after 2020-05-15).
+
+- General purpose example data set for user guide and working examples.
+  + Code Academy style demo. 
+  + Census shapefiles + VMT data from public sources
 
 
