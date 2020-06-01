@@ -6,9 +6,9 @@ Is the secure data commons on it's way to becoming a commons?
 - Add to the Areas for Improvement for SDC section to finish it. 
 
 What did we need to have?
-- requesting access: getting FMI data access from Ed
-- buckets: team bucket requested
-- code repositories
+- requesting access: getting FMI data access from Ed - DONE
+- buckets: team bucket requested - DONE
+- code repositories - DONE
 
 - What hurdles have been overcome already by the SDC team? 
 	+ Holes in the data being logged by SDC team,
@@ -20,9 +20,7 @@ What is scalable?
 
 Dan M questions: 
 1) how did the SDC enable you (or not) to do your research comparing the two datasets
-
-2) how well did the SDC document and disclose the limitations of the datasets you chose to use?
-
+) how well did the SDC document and disclose the limitations of the datasets you chose to use?
 3) how well did the SDC mediate access across enclaves of code (e.g., accessing the BTS/FMI work)
 
 
@@ -31,6 +29,11 @@ Dan M questions:
 Congestion and travel time reliability
 
 Discuss user needs for cross project analysis: "As a user of the commons, I expect X..."
+
+*Lessons learned*
+
+
+---------------
 
 
 # FMI Waze Hypothesis Document
