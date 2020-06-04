@@ -4,8 +4,8 @@ author: "Dan Flynn, Billy Chupp, Alexis Zubrow"
 date: "`r Sys.Date()`"
 output:
   html_document:
-    fig_caption: true
     df_print: paged
+    fig_caption: yes
     toc: yes
     toc_depth: 3
     toc_float:
@@ -106,7 +106,7 @@ However, beyond data access alone, competency in modern data science skills are 
 
 In addition, beyond these data science skills effective use of the SDC is facilitated by the following skills. 
 
-- Understanding the where data exist and how to share files.
+- Understanding where data exist and how to share files.
   + Data Warehouse: Each data set exists in a data warehouse which can be queried by users. Users need to understand the basics of how to connect to a data resource (typically a relational database) for data query.
   + Team S3 buckets: Data and file sharing with a team is achieved with the cloud data storage service from AWS, S3 buckets.
   + Local instance: Analysts work on cloud computing instances, which will feel familiar to anyone who has logged on to a computer remotely. 
@@ -450,7 +450,3 @@ While the Data Analyst user guide does provide basic steps for query of the data
 - Access S3 and download a file to the analyst workstation
 - Perform simple spatial overlays and data analysis, and then generate results locally
 - Save results to S3 and export
-
-
-- Demonstration o
-
