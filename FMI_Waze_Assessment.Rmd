@@ -47,14 +47,14 @@ d[d$speed_mean > 90 & !is.na(d$speed_mean), c('speed_min', 'speed_median', 'spee
 
 # Overview
 
-The Secure Data Commons ([SDC](https://its.dot.gov/data/secure/)) provides access to novel data sets within the Department of Transportation for researchers and partner agencies. The SDC provides a platform for analysis efforts which integrate these novel data sets. To date, this 'Commons' aspect of the Secure Data Commons has not been fully utilized; this research project demonstrates an approach to integrating multiple data sets in the SDC. This document summarizes the work of the SDC Cross-project team in assessing how two of the SDC data sets can be usefully analyzed together. 
+The Secure Data Commons ([SDC](https://its.dot.gov/data/secure/)) provides access to novel data sets within the Department of Transportation for researchers and partner agencies. The SDC provides a platform for analysis efforts which integrate these novel data sets. To date, the 'Commons' aspect of the Secure Data Commons has not been fully utilized; this research project demonstrates an approach to integrating multiple data sets in the SDC. This document summarizes the work of the SDC Cross-project team in assessing how two of the SDC data sets can be usefully analyzed together. 
 
 
 Two data sets are used in this work: 
 
 - **FMI Data**: The Freight Mobility Initiative (FMI) data is provided via an agreement between the American Transportation Research Institute (ATRI) and the Bureau of Transportation Statistics (BTS) of the USDOT. This data set includes GPS locations, speed, and direction of travel for anonymized trucks.
 
-- **Waze Data**: The mobile phone navigation app company Waze has been providing data on crowdsourced traffic incident reports and additional system-generated data via an agreement with the DOT. These data include location and time of incidents, along with a number of characteristics of incidents, as well as location, extent, and speed of jams. 
+- **Waze Data**: The mobile phone navigation app company Waze is providing data on crowdsourced traffic incident reports and additional system-generated data via an agreement with the DOT. These data include location and time of incidents, along with a number of characteristics of incidents, as well as location, extent, and speed of jams. 
 
 
 Data set characteristics:
@@ -81,8 +81,8 @@ From Redshift: select count(*) from {table}
 - Successfully integrating these two high-volume, high-velocity data sets requires a familiarity with the characteristics of the data, the data warehousing system, and best practices for geo-spatial analysis. Documentation exists in the SDC to provide much of this necessary information, but future users of these data would benefit from documentation which goes into more detail
 
 - The spatial and temporal patterns of the FMI and Waze data are distinct. 
-  + There are locations and times where there is high truck activity but low Waze activity, likely distribution centers and commercial shipping routes.
-  + The converse is true; Waze data volume is highest at commuting hours, in more densely populated areas.
+  + There are locations and times where truck activity is high but Waze activity is low, likely near distribution centers and commercial shipping routes.
+  + The converse is also true; Waze data volume is highest at commuting hours, in more densely populated areas.
   + However, there is useful areas of overlap between these two data sets.
 
 - This effort demonstrates a scale-able, repeatable process for query, integration, and analysis of multiple data sets within the SDC.
@@ -101,10 +101,10 @@ However, beyond data access alone, competency in modern data science skills are 
 - Efficient use of the data is greatly facilitated by familiarity with a modern **data science scripting language** such as R or Python. These open-source languages have a wide variety of sophisticated data science tools, including machine learning, geospatial analysis, time-series modeling, data integration, and data visualization. The SDC provides support for both R and Python, on the default Windows machines as well as on optional Linux machines.
 
 - **Code collaboration and version control** is supported in SDC with a GitLab server. 
-  + This allows analysts to follow modern data science best practices by developing code in collaboration with teammates, keeping working versions of code available while developing new features. Familiarity with the `git` workflow, including the use of the GitHub platform, will facilitate 
+  + This allows analysts to follow modern data science best practices by developing code in collaboration with teammates, keeping working versions of code available while developing new features. Familiarity with the `git` workflow, including the use of the GitHub platform, will facilitate this collaboration.
   + The data analyst user guide provides instructions on how to enable GitLab code repositories, but analysts need to bring their own knowledge of how to effectively set up and manage the repositories for their needs. 
 
-In addition, beyond these data science skills effective use of the SDC is facilitated by the following skills. 
+In addition, beyond these data science skills, effective use of the SDC is facilitated by the following skills. 
 
 - Understanding where data exist and how to share files.
   + Data Warehouse: Each data set exists in a data warehouse which can be queried by users. Users need to understand the basics of how to connect to a data resource (typically a relational database) for data query.
@@ -128,7 +128,7 @@ Some further details on how these skills are employed in the SDC follow in the s
 
 ### Data Access Permissions 
 
-Both data sets are accessed in the SDC, stored in separate data warehouses. In order to access the data, not only does an analyst need SDC credentials, but also permissions specific to the data warehouses. Data access request forms exits for each data set, and access requests are reviewed by the respective data stewards within USDOT. The data access request forms also include the responsibilities of the data analyst for secure handling of the data, as well as restrictions on how the data can be applied.
+Both data sets are accessed in the SDC, stored in separate data warehouses. In order to access the data, an analyst needs not only SDC credentials, but also permissions specific to the data warehouses. Data access request forms exit for each data set, and these requests are reviewed by the respective data stewards within USDOT. The data access request forms detail the responsibilities of the data analyst for secure handling of the data, as well as restrictions on how the data can be applied.
 
 The Cross project team requested and was granted permission to access these data sets within SDC.
 
@@ -136,7 +136,7 @@ The documentation of the datasets themselves is relatively scant currently. Meta
 
 ### Workstation Setup
 
-Within SDC, there are multiple workstation configurations possible. The default workstation is a Windows machine (as an AWS EC2 instance), with a number of open-source data science tools installed: SQL Workbench, Anaconda, RStudio, and Git for Windows being the tools used for this project.
+Within SDC, there are multiple workstation configurations possible. The default workstation is a Windows machine (as an AWS EC2 instance), with a number of open-source data science tools installed: SQL Workbench, Anaconda, RStudio, and Git for Windows are being the tools used for this project.
 
 In addition, users have the option to request other workstations. For this project, the data querying and analysis was all done using a Linux-formatted workstation. Some open-source geospatial tools are easier to install on Linux machines, and using development interfaces like Jupyter Notebooks for Python and RStudio Server for R allows a seamless user interface. Both Linux and Windows workstations can be re-sized as needed in the SDC. For large spatial analysis tasks, the processing can be parallelized and the instance can be configured with a large number of CPUs, facilitating rapid analysis workflows. 
 
@@ -144,7 +144,7 @@ Each project in SDC also has an AWS S3 bucket set up. The S3 bucket acts as a cl
 
 ### Repository Setup
 
-The code for this project is written in Python and R, and was contributed by multiple team members. To collaborate and version-control the code, we established a repository on the GitLab platform in SDC. We also drew on some general-purpose code written in Python for SDC users to query the FMI data, as well as code written in R for another project in the SDC for spatial analysis and mapping using open-source tools. SQL code was written for the data store queries, in some cases adapting template queries provided by the SDC enablement team. 
+The code for this project is written in Python and R, and was contributed by multiple team members. To collaborate and version-control the code, we established a repository on the GitLab platform in SDC. We also drew on some general-purpose code written in Python for SDC users to query the FMI data, as well as code written in R for another project in the SDC involving spatial analysis and mapping using open-source tools. SQL code was written for the data store queries, in some cases adapting template queries provided by the SDC enablement team. 
 
 The code for this project is version-controlled in the `FMI_Waze` repository on the GitLab service within SDC. 
 
@@ -161,18 +161,18 @@ The 'two-step' query process (first query a general area in SQL, then perform mo
 
 ## Spatial joining
 
-Joining two spatial datasets involves decisions on the part of the analysis team; the methods depend on the needs of the analysis. The two most meaningful options for this project were to join to road segments, or to join to a common grid structure. These two approaches are summarized below:
+The method chosen to join two spatial datasets depends on the required analysis. In this section, we will summarize two potential methods for spatial joining in the project and the factors that were considered in choosing a method. The two most meaningful options for this project were to join the datasets by road segments, or to join by a common grid structure. These two approaches are summarized below:
 
 - **Road segment**
-  + Joining points to road segments result in one row per road segment, with attributes for number and characteristics of commercial motor vehicles, and number and characteristics of traffic alerts. Each time step would add one additional row for each road segment.
-  + The Highway Performance Monitoring System ([HPMS](https://www.fhwa.dot.gov/policyinformation/hpms.cfm)) provides an road network for the National Highway System roads. While convenient to use for spatial analyses, it is limited by not including most lower functional class roads.
+  + Joining points to road segments results in a data structure where each road segment is an observation, with attributes for number and characteristics of commercial motor vehicles, and number and characteristics of traffic alerts. Each time step would add one additional row for each road segment.
+  + The Highway Performance Monitoring System ([HPMS](https://www.fhwa.dot.gov/policyinformation/hpms.cfm)) provides a road network for the National Highway System roads. While convenient to use for spatial analyses, it is limited because it does not include most lower functional class roads.
   + Each state maintains their own detailed road network. It would be possible to access a road network for this study area (Massachusetts), but the methods of spatial joining would need to be adapted to apply to other states.
-  + Any analyses need to take into account the different lengths and characteristics of the road segments; correctly joining points to road segments requires careful work to assign points correctly to the right lanes and directions (applicable to higher functional class roads).
+  + Any analyses need to take into account the different lengths and characteristics of the road segments; correctly joining points to road segments requires careful work to assign points correctly to the right lanes and directions (applicable to typically only to higher functional class roads).
 
 - **Grid or Polygon**
-  + Joining points to road segments result in one row per grid cell or polygon, with attributes for number and characteristics of commercial motor vehicles, and number and characteristics of traffic alerts. Each time step would add an additional row for each grid cell or polygon.
+  + Joining points to road segments results in a data structure where each grid cell or polygon is an observation, with attributes for number and characteristics of commercial motor vehicles, and number and characteristics of traffic alerts. Each time step would add an additional row for each grid cell or polygon.
   + Joining to a county, census block, or other political boundary is straightforward and would facilitate use of other characteristics of that political unit, including population or socio-economic data like the Longitudinal Employer-Household Dynamics ([LEHD](https://lehd.ces.census.gov/LEHD_data_research.html)) data from the Census Bureau.
-  + Joining to a grid cell is likewise straightforward. By providing an equal-area grid cell to join to, spatial analysis is greatly facilitated (as area does not need to be used as a co-variate). 
+  + Joining to a grid cell is likewise straightforward. By providing an equal-area grid cell to join to, spatial analysis is greatly facilitated, as area does not need to be used as a co-variate. 
 
 ```{r summarytables, eval=TRUE, include=FALSE}
 # Values for intro text
@@ -187,7 +187,7 @@ waze_sum1 <- d %>%
 ```
 
  
-For most safety applications, it is ideal to work at the road segment level, since that is where safety interventions can be applied. For our initial work, we elected to use a grid to facilitate rapid analysis for the purpose of comparing the two data sets in conjunction with each other. We joined all point data (FMI and Waze) to grid layer of 1 square-mile hexagons. Hexagonal tessellations are appropriate because they better represent underlying linear features like roads, while minimizing the data artifacts associated with edge areas ([ESRI reference](https://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/h-whyhexagons.htm)). The area of eastern Massachusetts selected here encompasses `r format(length(unique(d$GRID_ID)), big.mark = ',')` square miles. For the month of September 2019, data on `r format(sum(d$truck_n, na.rm = T), big.mark = ',', scientific = F)` unique trucks by hour were included from the FMI data, as well `r format(waze_sum1$total_waze, big.mark = ',', scientific = F)` unique Waze events by hour.
+For most safety applications, it is ideal to work at the road segment level, since most safety interventions are applied at this level. For our initial work, we elected to use a grid to facilitate rapid analysis to compare the two data sets in conjunction with each other. We joined all point data (FMI and Waze) to a grid layer of 1 square-mile hexagons. Hexagonal tessellations are appropriate because they better represent underlying linear features like roads, while minimizing the data artifacts associated with edge areas ([ESRI reference](https://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/h-whyhexagons.htm)). The area of eastern Massachusetts selected here encompasses `r format(length(unique(d$GRID_ID)), big.mark = ',')` square miles. For the month of September 2019, data on `r format(sum(d$truck_n, na.rm = T), big.mark = ',', scientific = F)` unique trucks by hour were included from the FMI data, as well `r format(waze_sum1$total_waze, big.mark = ',', scientific = F)` unique Waze events by hour.
 
 
 # Results
@@ -196,13 +196,13 @@ For most safety applications, it is ideal to work at the road segment level, sin
 
 The following maps show aggregated counts of unique truck IDs per hour and counts of Waze events per hour. The spatial unit is 1-square mile hexagonal grid cells. A road segment approach using the HPMS network or a more detailed state-provided network is possible in the future.
 
-These maps further aggregate the count of each  to daytime (7 am to 7pm, Eastern) and weekend/weekday time periods for ease of comparison.
+These maps further aggregate the count of each dataset to daytime (7 am to 7pm, Eastern) and weekend/weekday time periods for ease of comparison.
 
 ### Weekdays {.tabset .tabset-pills}
 
-Comparing daytime to nighttime, the FMI data show consistent patterns but less total volume in the evening. The mean count of unique truck IDs per hour ranges as high as 106, and high values are consistently observed along the interstate 495 and interstate 90 routes ([Google Map of the area](https://www.google.com/maps/place/Massachusetts/@42.1578263,-71.5714201,9z/data=!4m5!3m4!1s0x89e3656de973bffd:0x45c6d03655830d1c!8m2!3d42.4072107!4d-71.3824374)). While interstates appear prominently in the FMI data, there is even coverage across the entire study area for presence of trucking activity.
+Comparing daytime to nighttime, the FMI data show consistent patterns but less total volume in the evening. The mean count of unique truck IDs per hour reaches as high as 106. High values are consistently observed along the interstate 495 and interstate 90 routes ([Google Map of the area](https://www.google.com/maps/place/Massachusetts/@42.1578263,-71.5714201,9z/data=!4m5!3m4!1s0x89e3656de973bffd:0x45c6d03655830d1c!8m2!3d42.4072107!4d-71.3824374)). While interstate data is most prominent in the FMI dataset, there is data on truck activity across the entire study area.
 
-When clicking the `Waze Alert Counts` tab, a strikingly different pattern emerges. Note the scale differs between the FMI and Waze tabs. The dense cluster of Waze alert activity in the metro Boston area is maintained in both daytime and nighttime, but much less activity is observed in the nighttime. 
+When clicking the `Waze Alert Counts` tab, a strikingly different pattern emerges. Note the scale differs between the FMI and Waze tabs. The dense cluster of Waze alert activity in the metro Boston area is maintained in both daytime and nighttime, but much less activity is observed in the nighttime. Note the scale differs between the FMI and Waze tabs.
 
 #### FMI Truck Counts
 
@@ -246,9 +246,7 @@ knitr::include_graphics('images/Waze_count_plots_Page_3.jpg')
 
 ### FMI Truck Speeds {.tabset .tabset-pills}
 
-Note these maps compare just weekday and weekend time periods for mean speeds of unique truck IDs within a grid cell. 
-The mean speed of a given truck ID was first calculated; these values are the means of those mean values by truck ID.
-Truck speeds are generally lower in the Boston metro area, with the interstate areas contributing some of the highest speed. Speeds generally retain the same characteristics on weekdays and weekends.
+Note these maps compare only weekday and weekend time periods for mean speeds of unique truck IDs within a grid cell. The mean speed of a given truck ID was first calculated. The values in these maps are the overall averages of the mean speeds of all the trucks. Truck speeds are generally lower in the Boston metro area, with the interstate areas contributing some of the highest speed. Speeds generally retain the same characteristics on weekdays and weekends.
 
 #### Weekday
 
@@ -406,9 +404,9 @@ kable(sum_tab,
 Next steps will be considered in consultation with the project manager and stakeholders. We consider the following to represent potentially fruitful next steps:
 
 - **Pandemic response**
-  + The FMI data represents an unprecedented opportunity for USDOT to monitor and understand commercial motor vehicle activity. The COVID-19 pandemic is a natural experiment on all aspects of society, but in particular is affecting the trucking industry in distinct ways, with some states seeing spikes at the outset of the pandemic, followed by dips in trucking activity of different depths ([ATRI analysis](https://www.ttnews.com/articles/atri-coronavirus-study-shows-truck-activity-spike-dip-six-states)). 
+  + The FMI data represents an unprecedented opportunity for USDOT to monitor and understand commercial motor vehicle activity. The COVID-19 pandemic is a natural experiment on all aspects of society. In particular, it is affecting the trucking industry in distinct ways. Some states saw spikes at the outset of the pandemic, followed by dips of varying depths in trucking activity ([ATRI analysis](https://www.ttnews.com/articles/atri-coronavirus-study-shows-truck-activity-spike-dip-six-states)). 
   
-  + Combining the Waze and FMI data would provide a way for the department to understand and monitor the distinctive behaviors of commuters versus commercial motor vehicles as our country recovers from the pandemic.
+  + Combining the Waze and FMI data would provide a way for the Department to understand and monitor the distinctive behaviors of commuters versus commercial motor vehicles as our country recovers from the pandemic.
   
 - **Travel time / Mobility / Energy **
   + System-generated jam files from Waze include the spatial extent as well as severity of the jam. Looking at the influence of jams on freight travel from FMI could be fruitful.
@@ -416,12 +414,12 @@ Next steps will be considered in consultation with the project manager and stake
   + Fuel efficiency and truck platooning are possible to investigate using the FMI data, since unique truck IDs are available with GPS pings at high frequency.
 
 - **Safety**
-  + Crash predictability (with police crash report data). The Waze data has been successfully used to understand and predict crash frequency at broad spatial scales. Combining both Waze and FMI could support a crash prediction tool for commercial motor vehicles better than using either one of the data sets alone.
+  + Crash predictability (with police crash report data). The Waze data has been successfully used to understand and predict crash frequency at broad spatial scales. Combining both Waze and FMI could support a crash prediction tool for commercial motor vehicles more effectively than using either one of the data sets alone.
 
 - **Assessment of data and validation**
   + WYDOT Speed data to NPM-RDS. The Connected Vehicle Pilot in SDC has detailed vehicle speed data from Wyoming Department of Transportation. These data could be usefully validated against speed profile data for NHS road segments in the National Performance Management Research Data Set ([NPM-RDS](https://ops.fhwa.dot.gov/perf_measurement/)) from FHWA.
 
-  + TMAS to FMI. The Traffic Monitoring Analysis System ([TMAS](https://www.fhwa.dot.gov/policyinformation/tables/tmasdata/)) from FHWA provides ground-truthed traffic count and vehicle classification data at over 8,000 locations nationwide. Joining TMAS and FMI data would allow an understanding of the percent of all trucks which are represented in the FMI data by space and time.
+  + TMAS to FMI. The Traffic Monitoring Analysis System ([TMAS](https://www.fhwa.dot.gov/policyinformation/tables/tmasdata/)) from FHWA provides ground-truthed traffic count and vehicle classification data at over 8,000 locations nationwide. Joining TMAS and FMI data would allow an understanding of the percent of all trucks which are represented in the FMI data, and how this percent representation varies by space and time.
 
   + TMAS to Waze (under SDI). The Safety Data Initiative is now undertaking an analysis of the Waze data in the context of the TMAS data as noted above for FMI. This will provide confidence intervals for how much of the traveling public is represented in the Waze data.
 
@@ -439,7 +437,7 @@ This project allowed an opportunity to review areas of improvement for the SDC t
 
 Through this cross-project work, it became clear that there is a need for basic metrics to capture data completeness. Suggested approaches: 
 
-- Simple dashboard of data quality over time for each data set, reflecting gaps in data by day if any, as well as any warnings from the automated data quality tools (Canary). 
+- Simple dashboard of data quality over time for each data set, reflecting gaps in data by day, if any, as well as any warnings from the automated data quality tools (Canary). 
 - Record of updates to data sets made visible to users. For example, Waze alert data for April - December 2019 had gaps before 2020-05-15, but was fixed after 2020-05-15.
 
 **Demonstrations of analysis steps**
