@@ -62,5 +62,19 @@ Needed to answer these questions:
 	- Need to measure persistence of a specific spatial pattern over time (Moran's I over time, from ecology world).
 	
 	
+# 2020-06-11
+
+Stories for Ed: this is why **the FMI data** set is valuable (and why he should pay for it)
+
+# 2020-06-17
+
+- Set up a briefing with Ed / Ariel / Dan M 
+- Summarize key findings from Task 3 report from FY19 IAA
+- Get feedback from Ed/Ariel about how this supports BTS mission
+- Economic indicator? 
+- Route selection shift in the pandemic era
+- Compare with FAF? Calibrate FAF with FMI
+- Work zones from Waze (road closures) --> Freight flow
+- Look at FAA work for taking pings and threading to a track (threaded tracks... )
 
 
