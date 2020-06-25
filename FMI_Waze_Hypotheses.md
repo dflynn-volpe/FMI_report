@@ -9,9 +9,8 @@ Pandemic known patterns:
 <summary>Was the transportation system more efficient during the pandemic? </summary>
 
 #### Specific Questions:
-
 <details>
-	<summary>1. Is home delivery of goods more efficient than store delivery?</summary>
+<summary>1. Is home delivery of goods more efficienct than store delivery?</summary>
 	
 ##### Summary  
 Connect individual pings from trucks to determine routes. Compare volume of waze data to delivery truck routes. Compare delivery frequency during the pandemic to pre-pandemic delivery routes. Correlate waze data volume with truck volume in specific areas.
@@ -71,7 +70,6 @@ Connect individual pings from a truck to determine the route and create a metric
 <summary>Did freight travel patterns change during the pandemic? What structures in the transportation system does the pandemic response reveal?</summary>
 
 #### Specific Questions:  
-<details>
 
 <details>
 <summary>*1. Did long-haul vs short-haul freight exhibit different responses in trip efficiency during the pandemic?*</summary>
