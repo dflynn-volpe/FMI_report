@@ -72,27 +72,9 @@ Connect individual pings from a truck to determine the route and create a metric
 
 #### Specific Questions:  
 <details>
-<summary>1. Is there evidence of people moving out of cities?</summary>
-	
-##### Summary
-##### What can we do now?
-##### What do we need to do?
-##### What datasets do we need?
-##### What can we learn?
-</details>
 
 <details>
-<summary>2. Will cars be the main transportation method for personal travel?</summary>
-
-##### Summary
-##### What can we do now?
-##### What do we need to do?
-##### What datasets do we need?
-##### What can we learn?
-</details>
-
-<details>
-<summary>*3. Did long-haul vs short-haul freight exhibit different responses in trip efficiency during the pandemic?*</summary>
+<summary>*1. Did long-haul vs short-haul freight exhibit different responses in trip efficiency during the pandemic?*</summary>
 	
 ##### Summary
 Connect individual pings from a truck to determine the route. Create a metric for determining short-haul vs. long-haul. Determine volume of trucks on the road. Compare this data to previous FMI data and to FAF as baseline.
@@ -112,7 +94,7 @@ Connect individual pings from a truck to determine the route. Create a metric fo
 </details>
 
 <details>
-<summary>*4. Were there more last mile deliveries and more waze activity in affluent areas? Do last mile deliveries change in different communities (suburbs, cities, rural)?*</summary>
+<summary>*2. Were there more last mile deliveries and more waze activity in affluent areas? Do last mile deliveries change in different communities (suburbs, cities, rural)?*</summary>
 	
 ##### Summary
 Correlate change in last mile deliveries with the change in waze volume and affluence of areas. Create metric for last mile delivery of trucks. Correlate these change with affluence levels in different communities.
@@ -131,22 +113,11 @@ Correlate change in last mile deliveries with the change in waze volume and affl
 </details>
 
 <details>
-<summary>5. Did travel patterns correlate to state-level emergency declarations?</summary>
+<summary>Others Questions</summary>
 	
-##### Summary
-##### What can we do now?
-##### What do we need to do?
-##### What datasets do we need?
-##### What can we learn?
-</details>
-
-<details>
-<summary>6. Will teleworking continue past reopening of states?</summary>
-	
-##### Summary
-##### What can we do now?
-##### What do we need to do?
-##### What datasets do we need?
-##### What can we learn?
+* Is there evidence of people moving out of cities?
+* Will cars be the main transportation method for personal travel?
+* Did travel patterns correlate to state-level emergency declarations
+* Will teleworking continue past reopening of states?
 </details>
 </details>
