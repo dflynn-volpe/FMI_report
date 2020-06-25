@@ -92,7 +92,7 @@ Connect individual pings from a truck to determine the route and create a metric
 </details>
 
 <details>
-<summary>3. Did long-haul vs short-haul freight exhibit different responses in trip efficiency during the pandemic?</summary>
+<summary>*3. Did long-haul vs short-haul freight exhibit different responses in trip efficiency during the pandemic?*</summary>
 	
 ##### Summary
 Connect individual pings from a truck to determine the route. Create a metric for determining short-haul vs. long-haul. Determine volume of trucks on the road. Compare this data to previous FMI data and to FAF as baseline.
@@ -112,88 +112,41 @@ Connect individual pings from a truck to determine the route. Create a metric fo
 </details>
 
 <details>
-<summary>*4. Were there more last mile deliveries and more waze activity in affluent areas?*</summary>
+<summary>*4. Were there more last mile deliveries and more waze activity in affluent areas? Do last mile deliveries change in different communities (suburbs, cities, rural)?*</summary>
 	
+##### Summary
+Correlate change in last mile deliveries with the change in waze volume and affluence of areas. Create metric for last mile delivery of trucks. Correlate these change with affluence levels in different communities.
+##### What can we do now?
+* Create last mile delivery metric
+* Calculate volume of waze data
+* Determine how persistent these last mile changes are.
+##### What do we need to do?
+* Correlate FEHD and census data to changes in last mile delivery and waze volume data
+##### What datasets do we need?
+* FEHD dataset on types of work
+* Census data on income
+##### What can we learn?
+* Correlation between last mile delivery changes, waze volume changes, and affluence in different areas. 
+* Note that census data won’t reflect employment changes due to covid.
 </details>
 
-
-#### 1. Is home delivery of goods more efficient than store delivery?
+<details>
+<summary>5. Did travel patterns correlate to state-level emergency declarations?</summary>
+	
 ##### Summary
-
 ##### What can we do now?
 ##### What do we need to do?
 ##### What datasets do we need?
 ##### What can we learn?
- 
+</details>
 
-
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-### 1. Was the transportation system more efficient during the pandemic?
-Specific Questions:  
-* Is home delivery of goods more efficient than store delivery?
-* Has rush hour changed?
-* Have truck speeds increased and delivery routes become more direct?
-
-### 2. Did travel patterns change during the pandemic?/What structures of the transportation system were uncovered during the pandemic?
-Specific Questions:  
-* Is there a difference in last mile deliveries in suburbs vs. cities vs. rural?
-* Is there evidence of people moving out of cities?
-* Will cars be the main transportation method for personal travel?
-* Did long-haul vs short-haul freight exhibit different responses in trip efficiency during the pandemic?
-* Did travel patterns correlate to state-level emergency declarations?
-* Were there more last mile deliveries and more waze activity in affluent areas?
-
-
-## Mediating variables:
-- Spatial
-	+ Rural Vs. Urban impacts
-	+ Count of COVID cases
+<details>
+<summary>6. Will teleworking continue past reopening of states?</summary>
 	
-- Temporal
-	+ Speed of drop in trips/trip length/volume of data; length of time of the drop; speed of rebound
-	
-	
-## Pandemic consequences:
-
-Overall question:
-
-- *Did we have a more efficient transportation system duing the pandemic?*
-	+ Define efficiency: Moving goods 
-	+ Freight vs passenger vehicle travel
-	
-- *Did freight travel patterns change in the pandemic?*
-	+ If no, this may indicate that there is a limit to how the structure of freight travel can be changed, even in the absense of commuter travel.
-
-Specific questions:
-
-- Freight transportation spatial patterns: 
-	+ More direct routes? This is a testable hypothesis. Can compare with FAF as a baseline (as well as previous year FMI data)
-	+ This effect may be lagged (in terms of change in directness lagging behind the change in inertia)
-	+ This effect may have inertia, in terms of change in directness persisting even after commuter-driven congestion returns to pre-pandemic levels. 
-
-- Freight transportation trip efficiency:
-	+ It is possible that long-haul vs. short-haul (local) freight exhibit different responses in trip efficiency in the pandemic.
-	+ Differential effects of state-level emergency declarations on short-haul vs. long-haul.
-	
-
-## What we can measure:
-
-- Volume of trucks in a location, at a time
-- Can calculate trips: length, speed, 
-	+ Can then calculate efficiency of these trips (time required to complete a specific O-D pair)
-	+ Can calculate measure persistence of a specific spatial pattern over time (Moran's I over time, from ecology world).
-	
-
-## Other data sets
-
-- Transit: Can we match ridership on transit systems with congestion in Waze data?
-	+ Long term telework shift
-
-- Employment: Pattenrns will depend on type of work being done: potentially use LEHD [longtintudinal employer household data](https://lehd.ces.census.gov/data/) at census block level
-
-- State actions
+##### Summary
+##### What can we do now?
+##### What do we need to do?
+##### What datasets do we need?
+##### What can we learn?
+</details>
+</details>
