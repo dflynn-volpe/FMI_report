@@ -373,6 +373,18 @@ gj <- ggplot(d_j %>% filter(!is.na(median_speed)), aes(x = cut(na.omit(median_sp
 
 gj  
 
+gj <- ggplot(d_j %>% filter(!is.na(median_speed)), aes(x = cut(na.omit(median_speed), 2), y = sum_count)) + 
+  geom_boxplot() +
+  scale_y_log10() +
+  xlab('Median speed grouping') +
+  ylab('Log(N) of distinct truck IDs') +
+  facet_wrap(~high_jams) +
+  ggtitle('Truck speeds and counts by Waze jam reports')
+
+gj  
+
+# summary(lm(median_speed ~ high_jams, data = d_j)) # 7.69 mph increase in median speeds under low jam conditions
+
 ```
 
 The same data are summarized below in tabular form for quick reference.
