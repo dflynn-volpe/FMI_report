@@ -374,8 +374,10 @@ gj <- ggplot(d_j %>% filter(!is.na(median_speed)), aes(x = cut(na.omit(median_sp
 gj  
 
 gj <- ggplot(d_j %>% filter(!is.na(median_speed)), aes(x = cut(na.omit(median_speed), 2), y = sum_count)) + 
-  geom_boxplot() +
+  geom_boxplot(fill = rep(scales::alpha(c('skyblue','darkblue'), 0.2), 2)) +
   scale_y_log10() +
+  theme_bw() + 
+  scale_x_discrete(labels = c('0 - 38 mph', '38 - 77 mph')) +
   xlab('Median speed grouping') +
   ylab('Log(N) of distinct truck IDs') +
   facet_wrap(~high_jams) +
