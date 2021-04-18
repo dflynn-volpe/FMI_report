@@ -3,6 +3,9 @@ title: "FMI Waze Cross-Project Assessment"
 author: "Dan Flynn, Billy Chupp, Alexis Zubrow"
 date: "`r Sys.Date()`"
 output:
+  word_document:
+    toc: yes
+    toc_depth: '3'
   html_document:
     df_print: paged
     fig_caption: yes
@@ -11,6 +14,7 @@ output:
     toc_float:
       collapsed: yes
       smooth_scroll: yes
+always_allow_html: true
 ---
 
 <!-- Add the following line manually to the rendered HTML document so that IE does not block the javascript elements: -->
@@ -312,6 +316,9 @@ gp <- ggplot(d_a, aes(x = round(sum_count, 1), y = round(sum_all_waze, 1))) +
 
 ggplotly(gp, tooltip = 'text', width = 700, height = 600)
 
+ggsave(filename = 'FMI_Waze_Volume.jpg', gp,
+       height = 5, width = 6)
+
 ```
 
 Since both axes represent highly skewed data (few, very large values), it is also useful to view these relationships on a logarithmic scale. This demonstrates close correspondence between the volume of FMI and volume of Waze alert data when accounting for the distribution of the values.
@@ -321,6 +328,9 @@ gpl <- gp + scale_y_log10() + scale_x_log10()
 
 ggplotly(gpl, tooltip = 'text', width = 700, height = 600)
 
+
+ggsave(filename = 'FMI_Waze_Volume_log.jpg', gpl,
+       height = 5, width = 6)
 ```
 
 
